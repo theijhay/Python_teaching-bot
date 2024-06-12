@@ -1,0 +1,101 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - ask_functions
+  - ask_python_basics
+  - explain_python_basics
+  - ask_installation
+  - ask_packages
+  - ask_modules
+  - ask_variables
+  - ask_exceptions
+  - ask_classes
+  - ask_decorators
+  - ask_comprehensions
+  - ask_hello_world
+  - ask_control_structures
+  - ask_generators
+  - ask_libraries
+  - ask_data_types
+  - ask_lambda
+  - ask_file_io
+  - ask_operators
+  - ask_advanced_topics
+  - ask_python
+  - ask_control_flow
+  - ask_inheritance
+  - ask_oop_concepts
+
+responses:
+  utter_greet:
+    - text: "Hello! How can I help you today?"
+  utter_default:
+    - text: "Oops! Could you try asking me again in a different way?"
+  utter_ask_installation:
+    - text: "Sure, I can help you with Python installation. Do you need guidance for Windows, Mac, or Linux?"
+  utter_explain_python_basics:
+    - text: "Python basics include understanding variables, data types, control structures, functions, and modules."
+  utter_ask_packages:
+    - text: "Python packages are collections of modules. You can use the `pip` command to install them."
+  utter_ask_modules:
+    - text: "Modules in Python are files containing Python code. They help you organize your code into manageable parts."
+  utter_ask_variables:
+    - text: "Variables in Python are used to store data. You can create a variable by assigning a value to it using the `=` operator."
+  utter_ask_exceptions:
+    - text: "Exceptions in Python are errors detected during execution. You can handle them using try and except blocks."
+  utter_ask_classes:
+    - text: "Classes in Python are blueprints for creating objects. They encapsulate data and functions that operate on that data."
+  utter_ask_python_basics:
+    - text: "Python basics include understanding syntax, variables, data types, and basic operations."
+  utter_ask_oop_concepts:
+    - text: "OOP concepts in Python include classes, objects, inheritance, polymorphism, encapsulation, and abstraction."
+  utter_explain_functions:
+    - text: "Let me explain functions in Python..."
+  utter_ask_functions:
+    - text: "Functions in Python are reusable blocks of code that perform a specific task. You can define a function using the `def` keyword."
+  utter_ask_decorators:
+    - text: "Decorators in Python are functions that modify the behavior of other functions or methods. You use the `@decorator_name` syntax."
+  utter_ask_comprehensions:
+    - text: "Comprehensions in Python provide a concise way to create lists, dictionaries, and sets from existing iterables."
+  utter_ask_hello_world:
+    - text: "A simple 'Hello, World!' program in Python can be written using: `print('Hello, World!')`."
+  utter_ask_control_structures:
+    - text: "Control structures in Python include conditionals (if, elif, else) and loops (for, while)."
+  utter_ask_generators:
+    - text: "Generators in Python are functions that return an iterator that yields items one at a time. They use the `yield` keyword."
+  utter_ask_libraries:
+    - text: "Popular Python libraries include NumPy for numerical operations, Pandas for data analysis, and Requests for HTTP requests."
+  utter_ask_data_types:
+    - text: "Python has several data types including integers, floats, strings, lists, tuples, sets, and dictionaries."
+  utter_ask_lambda:
+    - text: "Lambda functions in Python are anonymous functions defined with the `lambda` keyword. They can have any number of arguments but only one expression."
+  utter_ask_file_io:
+    - text: "File I/O in Python involves reading from and writing to files using functions like `open()`, `read()`, `write()`, and `close()`."
+  utter_ask_operators:
+    - text: "Operators in Python include arithmetic operators (+, -, *, /), comparison operators (==, !=, >, <), and logical operators (and, or, not)."
+  utter_ask_advanced_topics:
+    - text: "Advanced Python topics include metaclasses, decorators, generators, and context managers."
+  utter_ask_python:
+    - text: "Python is a high-level, interpreted programming language known for its simplicity and readability."
+  utter_ask_control_flow:
+    - text: "Control flow in Python is managed using conditionals and loops, which dictate the order in which statements are executed."
+  utter_ask_inheritance:
+    - text: "Inheritance in Python allows one class to inherit attributes and methods from another class, promoting code reusability."
+  utter_goodbye:
+    - text: "Goodbye! If you have more questions, feel free to ask anytime."
+
+actions:
+  - utter_explain_functions
+  - utter_ask_functions
+  - utter_default
+  - utter_ask_python_basics
+  - utter_explain_python_basics
+  - action_provide_python_basics
+  - action_provide_data_types
+  - action_provide_control_structures
+  - action_provide_functions
+  - action_provide_oop_concepts
+  - action_provide_modules
+  - action_provide_exceptions
