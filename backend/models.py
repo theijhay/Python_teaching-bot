@@ -1,25 +1,27 @@
+from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, Column, Integer, String
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+from dotenv import load_dotenv
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import create_engine
+import os
 
+# Load environment variables from .env file
+load_dotenv()
 
+# SQLAlchemy database setup
 Base = declarative_base()
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://botuser:jhaytech@localhost/bot_database')
+engine = create_engine(DATABASE_URL)
+Session = scoped_session(sessionmaker(bind=engine))
+session = Session()
 
 class UserProgress(Base):
     __tablename__ = 'user_progress'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
-    progress = Column(String)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    progress_info = Column(String, nullable=False)
 
-# Update the engine creation to use a connection URL that is compatible with your database.
-DATABASE_URL = "sqlite:///user_progress.db"  # Update this to match your actual database URL.
-engine = create_engine(DATABASE_URL)
-
-# Use the new style session maker
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-session = SessionLocal()
-
-# Ensure the models are created in the database
-Base.metadata.create_all(bind=engine)
+# Create tables here
+Base.metadata.create_all(engine)

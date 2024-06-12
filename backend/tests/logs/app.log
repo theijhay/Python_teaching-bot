@@ -1,0 +1,4 @@
+2024-06-12 20:58:47,518 INFO: Test log message [in /home/dev-soft/Python_teaching-bot/backend/tests/test_unit.py:34]
+2024-06-12 20:58:53,267 INFO: App startup [in /home/dev-soft/Python_teaching-bot/backend/app.py:23]
+2024-06-12 20:58:54,652 INFO: Received message: Hello, Bot! [in /home/dev-soft/Python_teaching-bot/backend/app.py:56]
+2024-06-12 20:58:54,700 INFO: User progress saved to the database. [in /home/dev-soft/Python_teaching-bot/backend/app.py:64]
