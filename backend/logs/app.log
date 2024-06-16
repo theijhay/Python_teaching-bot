@@ -1,6 +1,0 @@
-2024-06-16 06:09:32,621 INFO: Test log message [in /home/dev-soft/Python_teaching-bot/backend/tests/test_unit.py:34]
-2024-06-16 06:14:05,934 INFO: App startup [in /home/dev-soft/Python_teaching-bot/backend/app.py:31]
-2024-06-16 06:14:53,183 INFO: Received message: Tell me about data types [in /home/dev-soft/Python_teaching-bot/backend/app.py:95]
-2024-06-16 06:14:53,184 INFO: Received message: Hello, Bot! [in /home/dev-soft/Python_teaching-bot/backend/app.py:95]
-2024-06-16 06:14:53,188 INFO: Received message: Hello, Bot! [in /home/dev-soft/Python_teaching-bot/backend/app.py:95]
-2024-06-16 06:14:53,188 INFO: Received message: Tell me about data types [in /home/dev-soft/Python_teaching-bot/backend/app.py:95]
