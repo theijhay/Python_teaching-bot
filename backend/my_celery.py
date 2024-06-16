@@ -18,3 +18,4 @@ def make_celery(app):
     # Update Celery's configuration with the Flask app's configuration
     celery.conf.update(app.config)
     return celery  # Return the configured Celery object
+
