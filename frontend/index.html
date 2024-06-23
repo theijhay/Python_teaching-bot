@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat with Bot</title>
+</head>
+<body>
+    <h1>Chat with Bot</h1>
+    <div>
+        <!-- Input field for the user's message -->
+        <input type="text" id="userMessage" placeholder="Type your message here...">
+        <!-- Button to send the user's message -->
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <!-- Div to display the chat history -->
+    <div id="chatWindow"></div>
+
+    <script>
+        // Function to send the user's message to the server
+        function sendMessage() {
+            const message = document.getElementById('userMessage').value;
+            const chatWindow = document.getElementById('chatWindow');
+
+            // Send a POST request to the server with the user's message
+            fetch('http://127.0.0.1:5001/webhook', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message }) // Convert the message to JSON
+            })
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                const taskId = data.task_id; // Get the task ID from the response
+                chatWindow.innerHTML += `<p>User: ${message}</p>`; // Display the user's message in the chat window
+                pollForResult(taskId); // Start polling for the bot's response
+            })
+            .catch(error => {
+                console.error('Error:', error); // Log any errors to the console
+            });
+        }
+
+        // Function to poll the server for the bot's response
+        function pollForResult(taskId) {
+            const chatWindow = document.getElementById('chatWindow');
+
+            // Send a GET request to the server to get the result of the task
+            fetch(`http://127.0.0.1:5000/result/${taskId}`)
+            .then(response => response.json()) // Parse the JSON response
+            .then(data => {
+                if (data.status === 'PENDING') {
+                    // If the task is still pending, poll again after 1 second
+                    setTimeout(() => pollForResult(taskId), 1000);
+                } else if (data.status === 'SUCCESS') {
+                    // If the task is successful, display the bot's response
+                    data.forEach(response => {
+                        chatWindow.innerHTML += `<p>Bot: ${response.text}</p>`;
+                    });
+                } else {
+                    // If there was an error, display an error message
+                    chatWindow.innerHTML += `<p>Bot: Error retrieving response</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error); // Log any errors to the console
+            });
+        }
+    </script>
+</body>
+</html>
