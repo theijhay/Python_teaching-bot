@@ -13,9 +13,9 @@ def make_celery(app):
     # Create a Celery object with the name of the Flask app
     celery = Celery(
         app.import_name,
-        broker=app.config['CELERY_BROKER_URL']  # Set the broker URL from the app's config
+        broker=app.config['CELERY_BROKER_URL'],  # Set the broker URL from the app's config
+        backend=app.config['CELERY_RESULT_BACKEND']  # Set the backend URL from the app's config
     )
     # Update Celery's configuration with the Flask app's configuration
     celery.conf.update(app.config)
     return celery  # Return the configured Celery object
-

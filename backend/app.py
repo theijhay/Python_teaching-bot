@@ -34,8 +34,8 @@ app.logger.info('App startup')
 load_dotenv()
 
 # Configure Celery
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['RESULT_BACKEND'] = 'redis://localhost:6379/0'
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6380/0'
+app.config['RESULT_BACKEND'] = 'redis://localhost:6380/0'
 app.config['broker_connection_retry_on_startup'] = True
 
 
@@ -49,7 +49,7 @@ setup_logging()
 
 
 # Specify model name
-model_name = '20240608-130304-claret-squircle.tar.gz'
+model_name = '20240623-115655-level-pond.tar.gz'
 
 # Load the Rasa model
 try:
@@ -67,6 +67,7 @@ logger = logging.getLogger(__name__)
 def home():
     return "Welcome to the Python Teaching Bot!"
 
+# Define a webhook endpoint that listens for POST requests
 @app.route('/webhook', methods=['POST'])
 def webhook():
     """
@@ -75,18 +76,43 @@ def webhook():
     Returns:
     - json: The status of the message processing.
     """
+    # Parse the incoming JSON data
     data = request.get_json()
+    # Extract the 'message' field from the JSON data
     message = data.get('message')
     
+    # If no message is provided, return a failure response with status code 400
     if not message:
         return jsonify({"status": "failed", "reason": "No message provided"}), 400
     
+    # Handle the user message asynchronously using Celery
     task = handle_user_message.apply_async(args=[message])
+    # Return a response indicating that the message is being processed, along with the task ID
     return jsonify({"status": "processing", "task_id": task.id})
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    logging.info("App startup")
+# Define an endpoint to get the result of a task based on its ID
+@app.route('/result/<task_id>', methods=['GET'])
+def get_result(task_id):
+    """
+    Endpoint to retrieve the result of a task using its task_id.
+    
+    Parameters:
+    - task_id (str): The ID of the task to retrieve the result for.
+    
+    Returns:
+    - json: The result of the task or its current status.
+    """
+    # Get the task result using Celery
+    task = celery.AsyncResult(task_id)
+    # If the task has completed successfully, return the result
+    if task.state == 'SUCCESS':
+        return jsonify(task.result)
+    # If the task is still pending, return a pending status
+    elif task.state == 'PENDING':
+        return jsonify({"status": "PENDING"})
+    # For any other state, return the task's current state and any additional information
+    else:
+        return jsonify({"status": task.state, "result": str(task.info)})
 
 # Define the Celery task
 @celery.task
@@ -118,4 +144,6 @@ def handle_user_message(message):
     return response_text
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    logging.basicConfig(level=logging.INFO)
+    logging.info("App startup")
+    app.run(debug=True, port=5001)
