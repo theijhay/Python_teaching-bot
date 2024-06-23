@@ -41,14 +41,14 @@
 #  password: password
 #  queue: queue
 action_endpoint:
-  url: "http://localhost:5055/webhook"
+  url: "http://localhost:5002/webhook"
 
 tracker_store:
-  type: "sql"  # Example: change this to the type of tracker store you're using
+  type: "sql"
   dialect: "sqlite"
   url: "sqlite:///rasa.db"
 
 event_broker:
-  type: "redis"  # Example: change this to the type of event broker you're using
+  type: "redis"
   url: "localhost"
   port: 6379
