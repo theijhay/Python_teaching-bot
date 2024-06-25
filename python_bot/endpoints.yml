@@ -41,7 +41,7 @@
 #  password: password
 #  queue: queue
 action_endpoint:
-  url: "http://localhost:5002/webhook"
+  url: "http://localhost:5000/webhook"
 
 tracker_store:
   type: "sql"
@@ -51,4 +51,4 @@ tracker_store:
 event_broker:
   type: "redis"
   url: "localhost"
-  port: 6379
+  port: 6380

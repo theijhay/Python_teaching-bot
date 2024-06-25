@@ -2,6 +2,30 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from typing import Any, Text, Dict, List
 from rasa_sdk.events import EventType
+import asyncio
+
+class ActionHandleUserMessage(Action):
+
+    def name(self) -> str:
+        return "action_handle_user_message"
+
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: dict):
+        user_message = tracker.latest_message.get('text')
+        
+        # Simulate an async operation (e.g., a long-running computation or I/O operation)
+        response = await self.handle_message_async(user_message)
+        
+        dispatcher.utter_message(text=response)
+        return []
+
+    async def handle_message_async(self, message: str) -> str:
+        # Simulate a delay to represent an async operation
+        await asyncio.sleep(1)
+        
+        # Process the message (implement your custom logic here)
+        response = f"Processed message: {message}"
+        return response
+
 
 class ActionProvidePythonInfo(Action):
     def name(self) -> Text:

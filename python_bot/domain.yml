@@ -263,6 +263,7 @@ session_config:
   carry_over_slots_to_new_session: true
 
 actions:
+  - action_handle_user_message
   - utter_greet
   - utter_ask_python_basics
   - utter_explain_python_basics
