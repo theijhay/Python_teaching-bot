@@ -1,21 +1,17 @@
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy import create_engine
+from dotenv import load_dotenv
 import os
 
 # Load environment variables from .env file
 load_dotenv()
 
 # SQLAlchemy database setup
-Base = declarative_base()
 DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://botuser:jhaytech@localhost/bot_database')
 engine = create_engine(DATABASE_URL)
 Session = scoped_session(sessionmaker(bind=engine))
-session = Session()
+Base = declarative_base()
 
 class UserProgress(Base):
     __tablename__ = 'user_progress'
@@ -23,5 +19,8 @@ class UserProgress(Base):
     user_id = Column(Integer, nullable=False)
     progress_info = Column(String, nullable=False)
 
-# Create tables here
+# Create tables if they do not exist
 Base.metadata.create_all(engine)
+
+# Create a scoped session for interacting with the database
+session = Session()

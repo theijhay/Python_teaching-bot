@@ -1,23 +1,19 @@
-from flask import Flask, request, jsonify
+from quart import Quart, request, jsonify
 from logging.handlers import RotatingFileHandler
 import logging
-from flask_cors import CORS
-from celery import Celery
-from flask_limiter import Limiter
+
+from quart_cors import cors
 from dotenv import load_dotenv
 import os
-from my_celery import Celery
 from models import Base, UserProgress, session
 from logging_config import setup_logging
-from flask import request
 from rasa_utils import load_specific_model
 import asyncio
 
+# Initialize Quart app
+app = Quart(__name__)
 
-# Initialize Flask app
-app = Flask(__name__)
-CORS(app)
-
+app = cors(app, allow_origin="*")
 
 # Configure logging
 if not os.path.exists('logs'):
@@ -33,20 +29,8 @@ app.logger.info('App startup')
 # Load environment variables from .env file
 load_dotenv()
 
-# Configure Celery
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6380/0'
-app.config['RESULT_BACKEND'] = 'redis://localhost:6380/0'
-app.config['broker_connection_retry_on_startup'] = True
-
-
-# Create Celery instance
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
-
-
 # Setup the logging
 setup_logging()
-
 
 # Specify model name
 model_name = '20240623-115655-level-pond.tar.gz'
@@ -58,18 +42,17 @@ except FileNotFoundError as e:
     logging.error(e)
     nlu_agent = None
 
-
 # Logging configuration
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @app.route('/')
-def home():
+async def home():
     return "Welcome to the Python Teaching Bot!"
 
 # Define a webhook endpoint that listens for POST requests
 @app.route('/webhook', methods=['POST'])
-def webhook():
+async def webhook():
     """
     Webhook endpoint to receive messages from users.
     
@@ -77,54 +60,36 @@ def webhook():
     - json: The status of the message processing.
     """
     # Parse the incoming JSON data
-    data = request.get_json()
+    data = await request.get_json()
     # Extract the 'message' field from the JSON data
     message = data.get('message')
-    
+    sender_id = data.get('sender_id')
+
     # If no message is provided, return a failure response with status code 400
     if not message:
         return jsonify({"status": "failed", "reason": "No message provided"}), 400
     
-    # Handle the user message asynchronously using Celery
-    task = handle_user_message.apply_async(args=[message])
-    # Return a response indicating that the message is being processed, along with the task ID
-    return jsonify({"status": "processing", "task_id": task.id})
-
-# Define an endpoint to get the result of a task based on its ID
-@app.route('/result/<task_id>', methods=['GET'])
-def get_result(task_id):
-    """
-    Endpoint to retrieve the result of a task using its task_id.
+    # Handle the user message asynchronously
+    response_text = await handle_user_message(message, sender_id)
     
-    Parameters:
-    - task_id (str): The ID of the task to retrieve the result for.
-    
-    Returns:
-    - json: The result of the task or its current status.
-    """
-    # Get the task result using Celery
-    task = celery.AsyncResult(task_id)
-    # If the task has completed successfully, return the result
-    if task.state == 'SUCCESS':
-        return jsonify(task.result)
-    # If the task is still pending, return a pending status
-    elif task.state == 'PENDING':
-        return jsonify({"status": "PENDING"})
-    # For any other state, return the task's current state and any additional information
-    else:
-        return jsonify({"status": task.state, "result": str(task.info)})
+    # Return a response indicating that the message has been processed
+    return jsonify({"status": "processed", "response": response_text})
 
-# Define the Celery task
-@celery.task
-def handle_user_message(message):
+async def handle_user_message(message, sender_id):
     # Log the received message
     logger.info(f"Received message: {message}")
     
     # Define an asynchronous function to process the message
-    async def process_message(message):
+    async def process_message(message, sender_id):
         # Call the NLU agent to parse the message and generate a response
-        response = await nlu_agent.parse_message(message)
-        response_text = response['text']
+        try:
+            responses = await nlu_agent.handle_text(message, sender_id=sender_id)
+            response_text = responses[0].get("text") if responses else "Sorry, I didn't understand that."
+            logger.info(f"Rasa NLU response: {response_text}")
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+            response_text = "There was an error processing your message."
+        
         # Log the generated response
         logger.info(f"Generated response: {response_text}")
 
@@ -136,14 +101,11 @@ def handle_user_message(message):
         logger.info("User progress saved to the database.")
         return response_text
     
-    # Get the current event loop or create a new one
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    # Run the asynchronous process_message function until it completes
-    response_text = loop.run_until_complete(process_message(message))
+    # Run the asynchronous process_message function and return the result
+    response_text = await process_message(message, sender_id)
     return response_text
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     logging.info("App startup")
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5000)
