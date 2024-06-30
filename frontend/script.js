@@ -81,6 +81,8 @@ function displayMessage(message, type, fontColor = 'white', borderRadius = '16px
     messageDiv.style.fontSize = fontSize; // Set font size
     messageDiv.style.maxWidth = maxWidth; // Set maximum width
     messageDiv.style.boxShadow = boxShadow; // Set box shadow for depth
+    messageDiv.style.whiteSpace = 'pre-wrap'; // Preserve line breaks
+    messageDiv.style.wordWrap = 'break-word';
 
     // Step 4: Apply different classes based on the message type
     if (type === 'user-message') {
@@ -106,6 +108,7 @@ async function sendMessage() {
 
     // Display user input in the bot-answer class
     displayMessage(message, 'user-message');
+
 
     // Clear the textarea and reset height
     userInput.value = '';

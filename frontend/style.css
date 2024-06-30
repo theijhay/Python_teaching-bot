@@ -320,6 +320,7 @@ main {
     box-sizing: border-box;
 }
 
+
 main .view {
     display: flex;
     flex-direction: column;
@@ -402,11 +403,11 @@ p.secondary {
 
 .logo {
     
-    position: relative;
-    color: var(--color-logo);
-    text-align: center;
+    position: fixed;
     height: 430px;
-    z-index: -1;
+    left:20cm;
+    top:3cm;
+    z-index:-1;
 }
 
 .view.conversation-view {
@@ -464,6 +465,8 @@ p.secondary {
     text-align: center;
     padding: 0px 45px 0 45px;
     box-shadow: var(--color-main) 0 0 50px;
+    overflow: hidden;
+    min-height: 100px;
 }
 
 .message-wrapper {
@@ -610,12 +613,31 @@ p {
     margin-bottom: 3px; /* Add space between messages */;
 }
 
+/* .user-message, .bot-message {
+    padding: 12px 16px; /* Add padding to make the container larger than the text
+    border-radius: 10px;
+    margin: 10px 0;
+    max-width: 60%;
+    white-space: pre-wrap; /* Preserve whitespace and line breaks
+    word-wrap: break-word; /* Allow long words to break to the next line 
+} */
+
 .user-message {
-    background-color: #97732d; /* Different color for user messages */
+    background-color: #db6755; /* Different color for user messages */
     align-self: flex-end; /* Align user messages to the right */
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    word-wrap: break-word; /* Allow long words to break to the next line */
+    padding: 12px 16px; /* Add padding to make the container larger than the text */
+    position: relative;
+
+
 }
 
 .bot-message {
     background-color: #007bff; /* Different color for bot messages */
     align-self: flex-start; /* Align bot messages to the left */
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    word-wrap: break-word; /* Allow long words to break to the next line */
+    padding: 12px 16px; /* Add padding to make the container larger than the text */
+    position: relative;
 }
